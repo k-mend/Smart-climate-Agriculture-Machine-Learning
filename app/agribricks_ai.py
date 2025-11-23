@@ -8,10 +8,10 @@ import base64
 from typing import Dict, List, Optional
 from langchain_groq import ChatGroq
 
-# --- FIX: UPDATED IMPORTS FOR NEWER LANGCHAIN VERSIONS ---
+# --- UPDATED IMPORTS FOR LANGCHAIN v0.3+ ---
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage
-# ---------------------------------------------------------
+# -------------------------------------------
 
 from .config import settings
 
@@ -30,17 +30,19 @@ class AgribricksAI:
         else:
             try:
                 # Text-based LLM for general advice
+                # Using Llama 3.3 70B (Versatile and high quality)
                 self.llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="meta-llama/llama-3.3-70b-versatile", # Updated to a stable Groq model ID
+                    model_name="llama-3.3-70b-versatile", 
                     temperature=0.3,
                     max_tokens=1024
                 )
 
                 # Vision LLM for crop disease detection
+                # Using Llama 3.2 90B Vision
                 self.vision_llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="llama-3.2-90b-vision-preview", # Updated to a stable Vision model ID
+                    model_name="llama-3.2-90b-vision-preview", 
                     temperature=0.2,
                     max_tokens=1024
                 )
