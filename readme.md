@@ -1,6 +1,49 @@
 # Climate-Smart Agriculture & Smart Mobility API
-
 An ML-powered FastAPI backend for agricultural insights and intelligent routing based on weather predictions and road conditions.
+
+# Crop and Rain Prediction API
+
+This project provides a **FastAPI-based API** to predict the probability of rain, estimate precipitation amount, and recommend crops suitable for given weather conditions. The project was originally developed in Jupyter notebooks, and the final trained models are packaged for deployment.
+
+## Problem Statement
+
+This project uses **historical weather and crop data to build predictive models** that forecast rainfall (both probability and amount) and recommend suitable crops based on agro-climatic conditions. It addresses the challenge of agricultural planning under uncertain weather by combining **XGBoost and RandomForest models** for rain prediction with a crop recommendation system based on temperature and rainfall tolerances. The goal is to provide a **reliable, data-driven decision support tool for farmers**. The models and data are based on **Kenya's weather dataset**.
+
+
+## Dataset
+
+### NASA POWER API
+Base URL: `https://power.larc.nasa.gov/api/temporal/daily/point`
+
+#### Parameters
+```python
+# Historical date range for training
+START_DATE = "19930101"
+END_DATE = "20251031"
+
+# Weather parameters from NASA POWER
+# PRECTOTCORR - Precipitation (mm/day)
+# T2M - Temperature at 2m (°C)
+# RH2M - Relative Humidity at 2m (%)
+# ALLSKY_SFC_SW_DWN - All Sky Surface Shortwave Downward Irradiance (W/m²) - proxy for sunshine
+PARAMETERS = ["PRECTOTCORR", "T2M", "RH2M", "ALLSKY_SFC_SW_DWN"]
+```
+
+#### Locations
+```python
+LOCATIONS = {
+    "highlands_humid_nyeri": {"name": "Nyeri (Highlands, Humid)", "latitude": -0.4167, "longitude": 36.9500},
+    "upper_midlands_kitale": {"name": "Kitale (Upper Midlands, High Potential)", "latitude": 1.0167, "longitude": 35.0000},
+    "lower_midlands_semiarid_machakos": {"name": "Machakos (Lower Midlands, Semi-Arid)", "latitude": -1.5167, "longitude": 37.2667},
+    "coastal_lowlands_malindi": {"name": "Malindi (Coastal Lowlands, Humid)", "latitude": -3.2236, "longitude": 40.1300},
+    "arid_lowlands_lodwar": {"name": "Lodwar (Arid Lowlands, Arid)", "latitude": 3.1191, "longitude": 35.5973}
+}
+```
+
+### Ecocrop Dataset
+
+You can download the Ecocrop dataset from their GitHub repo: [EcoCrop_DB.csv](https://github.com/OpenCLIM/ecocrop/blob/main/EcoCrop_DB.csv)
+
 
 ## Features
 
@@ -98,6 +141,7 @@ pip install -r requirements.txt
 ```bash
 docker compose up -d
 ```
+![Docker Build](Screenshots/Docker%20build.png)
 
 ## Training Models
 
@@ -145,6 +189,7 @@ Check that these files exist in `models/`:
 ```bash
 # Start all services
 docker compose up -d
+![Docker Build](Screenshots/Docker%20build.png)
 
 # View logs
 docker compose logs -f api
@@ -159,6 +204,7 @@ if virtual environment is not activated activate with
 source venv/bin/activate
 uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 ```
+![Running Locally](Screenshots/Api%20running.png)
 
 The API will be available at:
 - API: http://localhost:8000
