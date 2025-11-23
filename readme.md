@@ -357,15 +357,27 @@ ENABLE_ROAD_CACHE=True
 - [ ] Use production-grade WSGI server
 
 ### Deploy to Cloud
-```bash
-# Build and push Docker image
-docker build -t climate-agri-api:latest .
-docker tag climate-agri-api:latest your-registry/climate-agri-api:latest
-docker push your-registry/climate-agri-api:latest
+Deployment to the cloud.
+On render create a postgres instance and copy the internal url
+Create a new webservice and configure the following:
+- Connect your GitHub repository.
 
-# Deploy using your cloud provider's tools
-```
+- Name: Give it a name (e.g., agri-mobility-api).
 
+- Region: Choose the one closest to you (e.g., Frankfurt or Oregon).
+
+- Branch: main (or whatever branch your code is on).
+
+Configure the following envirinment variables:
+ORS_API_KEY -> From OpenRouteService
+OPENROUTER_API_KEY -> From OpenRouter
+RAINFALL_THRESHOLD -> 20.0
+ORS_BASE_URL -> https://api.openrouteservice.org,
+OPENROUTER_MODEL -> anthropic/claude-3-haiku,
+DATA_DIR -> ./data
+MODELS_DIR -> ./models
+
+#### Live url found at: "https://smart-climate-agriculture-machine.onrender.com" to test the apis add  "/docs" to the url
 ## Troubleshooting
 
 ### Models not loading
