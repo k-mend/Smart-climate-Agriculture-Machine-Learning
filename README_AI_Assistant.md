@@ -1,6 +1,6 @@
 # 🤖 Agribricks AI Assistant
 
-An AI-powered agricultural advisor that provides expert farming advice using Groq's Llama3-70B model and LangChain.
+An AI-powered agricultural advisor that provides expert farming advice using Groq's Llama-4 Maverick model and LangChain, with Llama-4 Scout for crop disease detection.
 
 ## 🌟 Features
 
@@ -9,6 +9,7 @@ An AI-powered agricultural advisor that provides expert farming advice using Gro
 - **Pest & Disease Control**: Natural and effective solutions
 - **Soil Health**: Fertility management and improvement tips
 - **Weather-Based Decisions**: Climate-smart farming practices
+- **🔬 Disease Detection**: AI-powered image analysis for crop diseases
 - **Multi-language Support**: Responses in different languages
 - **Confidence Scoring**: Reliability indicators for advice
 
@@ -16,7 +17,7 @@ An AI-powered agricultural advisor that provides expert farming advice using Gro
 
 ### 1. Install Dependencies
 ```bash
-pip install -r requirements_ai_only.txt
+pip install -r requirements.txt
 ```
 
 ### 2. Get Groq API Key
@@ -32,10 +33,7 @@ GROQ_API_KEY=your_groq_api_key_here
 
 ### 4. Run the AI Assistant
 ```bash
-# Standalone version (AI only)
-python agribricks_standalone.py
-
-# Or integrate with existing FastAPI app
+# Run the main FastAPI application (includes all endpoints)
 uvicorn app.main:app --reload
 ```
 
@@ -157,7 +155,7 @@ python test_agribricks_ai.py
 
 ### Local Development
 ```bash
-python agribricks_standalone.py
+uvicorn app.main:app --reload
 ```
 
 ### Production (Docker)
@@ -165,8 +163,8 @@ python agribricks_standalone.py
 FROM python:3.10-slim
 COPY . /app
 WORKDIR /app
-RUN pip install -r requirements_ai_only.txt
-CMD ["python", "agribricks_standalone.py"]
+RUN pip install -r requirements.txt
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 ### Cloud Deployment

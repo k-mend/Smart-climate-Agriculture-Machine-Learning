@@ -28,7 +28,7 @@ class AgribricksAI:
                 # Text-based LLM for general advice
                 self.llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="llama3-70b-8192",  # Using Llama 3 70B for better agriculture knowledge
+                    model_name="meta-llama/llama-4-maverick-17b-128e-instruct",  # Using Llama 4 Maverick for agriculture knowledge
                     temperature=0.3,  # Lower temperature for more factual responses
                     max_tokens=1024
                 )
@@ -36,12 +36,12 @@ class AgribricksAI:
                 # Vision LLM for crop disease detection
                 self.vision_llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="llama-3.2-90b-vision-preview",  # Vision model for image analysis
+                    model_name="meta-llama/llama-4-scout-17b-16e-instruct",  # Vision model for image analysis
                     temperature=0.2,  # Even lower temperature for medical/diagnostic accuracy
                     max_tokens=1024
                 )
                 
-                logger.info("Groq LLMs initialized successfully (Text + Vision)")
+                logger.info("Groq LLMs initialized successfully (Llama-4 Maverick + Scout)")
             except Exception as e:
                 logger.error(f"Failed to initialize Groq LLMs: {e}")
                 self.llm = None
@@ -481,7 +481,7 @@ Be thorough but practical in your recommendations.
                 "crop_type": crop_type,
                 "location": location,
                 "additional_symptoms": additional_symptoms,
-                "model_used": "llama-3.2-90b-vision-preview"
+                "model_used": "meta-llama/llama-4-scout-17b-16e-instruct"
             })
             
             return diagnosis_data
@@ -503,6 +503,7 @@ Be thorough but practical in your recommendations.
                     "Isolate affected plants if possible",
                     "Document symptoms with multiple photos"
                 ],
+                "model_used": "meta-llama/llama-4-scout-17b-16e-instruct",
                 "error": str(e)
             }
     

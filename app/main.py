@@ -448,7 +448,7 @@ async def agribricks_ai_health():
             "status": "healthy" if is_healthy else "degraded",
             "message": "Agribricks AI is operational" if is_healthy else "AI service experiencing issues",
             "service": "Agribricks AI Assistant",
-            "model": "Groq Llama3-70B",
+            "model": "Llama-4 Maverick + Scout",
             "capabilities": [
                 "Crop management advice",
                 "Pest and disease control",
@@ -575,7 +575,7 @@ async def crop_disease_detection(
             location=location,
             additional_symptoms=additional_symptoms,
             full_analysis=f"Error occurred during analysis: {str(e)}",
-            model_used="llama-3.2-90b-vision-preview"
+            model_used="meta-llama/llama-4-scout-17b-16e-instruct"
         )
 
 if __name__ == "__main__":

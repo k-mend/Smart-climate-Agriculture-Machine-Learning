@@ -70,7 +70,7 @@ You can download the Ecocrop dataset from their GitHub repo: [EcoCrop_DB.csv](ht
 
 - **🔬 Crop Disease Detection**: AI-powered plant pathology (NEW!)
   - Upload plant images for instant disease diagnosis
-  - Uses Llama-3.2-90B Vision model for accurate analysis
+  - Uses Llama-4 Scout model for accurate image analysis
   - Provides treatment recommendations and management strategies
   - Supports multiple image formats (JPEG, PNG, GIF, WebP)
   - Regional disease context and severity assessment
@@ -218,9 +218,13 @@ docker compose down
 
 ### Running Locally
 ```bash
-if virtual environment is not activated activate with
-source venv/bin/activate
-uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+# Activate virtual environment if not already activated
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate     # Windows
+
+# Run the FastAPI application (includes all endpoints)
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 ![Running Locally](Screenshots/Running%20locally.png)
 
@@ -405,7 +409,7 @@ curl -X POST "http://localhost:8000/api/crop-disease-detection" \
   ],
   "crop_type": "tomato",
   "location": "Central Kenya",
-  "model_used": "llama-3.2-90b-vision-preview",
+  "model_used": "meta-llama/llama-4-scout-17b-16e-instruct",
   "full_analysis": "Detailed pathological analysis..."
 }
 ```
