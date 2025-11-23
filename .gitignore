@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# Environment Variables (NEVER commit this)
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Data Cache
+# We keep the folder structure, but ignore the downloaded files
+data/road_data/*.geojson
+data/road_data/*.graphml
+
+# IDES
+.vscode/
+.idea/
+
+# Mac OS
+.DS_Store

@@ -1,0 +1,15 @@
+# Ignore the local virtual environment (Docker builds its own)
+venv/
+.venv/
+env/
+
+# Ignore git history
+.git/
+.gitignore
+
+# Ignore cache and local secrets
+__pycache__/
+.env
+.ipynb_checkpoints/
+Screenshots/
+README.md

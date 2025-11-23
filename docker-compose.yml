@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # --- 1. FastAPI Backend Service ---
+  api:
+    build: .
+    container_name: agri_mobility_api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Map local data folder to container. 
+      # Essential for saving downloaded OSMnx road files to your laptop.
+      - ./data:/project/data
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      # Overwrite the DB host to point to the service name 'db'
+      - DATABASE_URL=postgresql://postgres:12345@db:5432/postgres
+
+  # --- 2. PostgreSQL Database Service ---
+  db:
+    image: postgres:15
+    container_name: agri_mobility_db
+    ports:
+      - "5432:5432" # Allows you to connect using pgAdmin/DBeaver from your laptop
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      # configured to match your local default settings
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: postgres
+    restart: unless-stopped
+
+# Define the persistent volume for the database
+volumes:
+  postgres_data:
