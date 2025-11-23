@@ -468,7 +468,7 @@ MIT License - see LICENSE file
 ## Support
 
 For issues and questions:
-- Email: kmend8980@gmail.com
+- on X: @mendykev
 
 ## Acknowledgments
 
