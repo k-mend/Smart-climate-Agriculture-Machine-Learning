@@ -77,8 +77,8 @@ climate-agri-mobility/
 
 1. **Clone the repository**
 ```bash
-git clone <your-repo-url>
-cd climate-agri-mobility
+git clone <git@github.com:k-mend/Smart-climate-Agriculture-Machine-Learning.git>
+cd Smart-climate-Agriculture-Machine-Learning
 ```
 
 2. **Create and configure .env file**
@@ -89,14 +89,14 @@ cp .env.example .env
 
 3. **Install dependencies with Pipenv**
 ```bash
-pip install pipenv
-pipenv install
-pipenv shell
+python -m venv venv
+source venv/bin/activate(linux)
+pip install -r requirements.txt
 ```
 
 4. **Or use Docker Compose (recommended)**
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Training Models
@@ -109,7 +109,7 @@ Place your datasets in the `data/` directory:
 ### Step 2: Train Models
 ```bash
 # Activate virtual environment
-pipenv shell
+source venv/bin/activate
 
 # Run notebooks in order
 jupyter notebook notebooks/01_rainfall_prediction.ipynb
@@ -144,18 +144,19 @@ Check that these files exist in `models/`:
 ### Using Docker (Recommended)
 ```bash
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f api
+docker compose logs -f api
 
 # Stop services
-docker-compose down
+docker compose down
 ```
 
-### Using Pipenv
+### Running Locally
 ```bash
-pipenv shell
+if virtual environment is not activated activate with
+source venv/bin/activate
 uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -325,6 +326,7 @@ OPENROUTER_API_KEY=your_key_here
 
 # Database
 DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
+and when running on docker remember to change from @localhost to @db
 
 # Model Settings
 RAINFALL_THRESHOLD=20.0  # mm for road vulnerability
@@ -334,16 +336,6 @@ ENABLE_ROAD_CACHE=True
 ## Development
 
 ### Running Tests
-```bash
-pipenv shell
-pytest tests/
-```
-
-### Code Formatting
-```bash
-black api/
-flake8 api/
-```
 
 ### Adding New Models
 1. Create training notebook in `notebooks/`
