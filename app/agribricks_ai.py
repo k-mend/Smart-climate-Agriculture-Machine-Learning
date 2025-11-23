@@ -7,8 +7,12 @@ import logging
 import base64
 from typing import Dict, List, Optional
 from langchain_groq import ChatGroq
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema import HumanMessage
+
+# --- FIX: UPDATED IMPORTS FOR NEWER LANGCHAIN VERSIONS ---
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage
+# ---------------------------------------------------------
+
 from .config import settings
 
 logger = logging.getLogger(__name__)
@@ -28,7 +32,7 @@ class AgribricksAI:
                 # Text-based LLM for general advice
                 self.llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="meta-llama/llama-4-maverick-17b-128e-instruct",
+                    model_name="meta-llama/llama-3.3-70b-versatile", # Updated to a stable Groq model ID
                     temperature=0.3,
                     max_tokens=1024
                 )
@@ -36,12 +40,12 @@ class AgribricksAI:
                 # Vision LLM for crop disease detection
                 self.vision_llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="meta-llama/llama-4-scout-17b-16e-instruct",
+                    model_name="llama-3.2-90b-vision-preview", # Updated to a stable Vision model ID
                     temperature=0.2,
                     max_tokens=1024
                 )
 
-                logger.info("Groq LLMs initialized successfully (Llama-4 Maverick + Scout)")
+                logger.info("Groq LLMs initialized successfully")
             except Exception as e:
                 logger.error(f"Failed to initialize Groq LLMs: {e}")
                 self.llm = None
@@ -354,7 +358,7 @@ Please analyze the uploaded plant image and provide a comprehensive diagnostic r
                 "crop_type": crop_type,
                 "location": location,
                 "additional_symptoms": additional_symptoms,
-                "model_used": "meta-llama/llama-4-scout-17b-16e-instruct"
+                "model_used": "llama-3.2-90b-vision-preview"
             })
 
             return diagnosis_data
@@ -376,7 +380,7 @@ Please analyze the uploaded plant image and provide a comprehensive diagnostic r
                     "Isolate affected plants if possible",
                     "Document symptoms with multiple photos"
                 ],
-                "model_used": "meta-llama/llama-4-scout-17b-16e-instruct",
+                "model_used": "llama-3.2-90b-vision-preview",
                 "error": str(e)
             }
 
