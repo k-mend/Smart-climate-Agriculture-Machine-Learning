@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime
 import logging
-from typing import List
+from typing import List, Dict, Optional
 
 from .config import settings
 from .database import get_db, engine, Base
