@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     # API Keys
     ORS_API_KEY: str
     OPENROUTER_API_KEY: str
+    GROQ_API_KEY: Optional[str] = None
     
     # Database
     DATABASE_URL: str = "postgresql://user:password@localhost:5432/climate_agri_db"

@@ -60,6 +60,21 @@ You can download the Ecocrop dataset from their GitHub repo: [EcoCrop_DB.csv](ht
   - Growth duration
   - Suitability scoring
 
+- **🤖 Agribricks AI Assistant**: Expert agricultural advice powered by AI
+  - Context-aware farming guidance using Groq and LangChain
+  - Crop management and pest control advice
+  - Soil health and fertilization recommendations
+  - Weather-based farming decisions
+  - Sustainable farming practices
+  - Multi-language support
+
+- **🔬 Crop Disease Detection**: AI-powered plant pathology (NEW!)
+  - Upload plant images for instant disease diagnosis
+  - Uses Llama-4 Scout model for accurate image analysis
+  - Provides treatment recommendations and management strategies
+  - Supports multiple image formats (JPEG, PNG, GIF, WebP)
+  - Regional disease context and severity assessment
+
 ###  Smart Mobility
 - **Weather-Aware Routing**: Intelligent route planning
   - Avoids vulnerable roads during heavy rainfall
@@ -75,7 +90,8 @@ You can download the Ecocrop dataset from their GitHub repo: [EcoCrop_DB.csv](ht
 - **Containerization**: Docker, Pipenv
 - **Routing**: OpenRouteService, OSMnx
 - **Geocoding**: GeoPy
-- **AI Enhancement**: OpenRouter (Claude)
+- **AI Enhancement**: OpenRouter (Claude), Groq (Llama3-70B)
+- **AI Framework**: LangChain
 
 ## Project Structure
 
@@ -90,7 +106,8 @@ climate-agri-mobility/
 │   ├── ml_models.py         # ML inference
 │   ├── routing.py           # Routing service
 │   ├── geocoding.py         # Location services
-│   └── ai_humanizer.py      # AI response enhancement
+│   ├── ai_humanizer.py      # AI response enhancement
+│   └── agribricks_ai.py     # Agribricks AI Assistant
 ├── notebooks/
 │   ├── 01_rainfall_prediction.ipynb
 │   └── 02_crop_recommendation.ipynb
@@ -115,6 +132,7 @@ climate-agri-mobility/
 - API Keys:
   - OpenRouteService API key
   - OpenRouter API key (optional, for AI humanization)
+  - Groq API key (for Agribricks AI Assistant)
 
 ### Setup
 
@@ -200,9 +218,13 @@ docker compose down
 
 ### Running Locally
 ```bash
-if virtual environment is not activated activate with
-source venv/bin/activate
-uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+# Activate virtual environment if not already activated
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate     # Windows
+
+# Run the FastAPI application (includes all endpoints)
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 ![Running Locally](Screenshots/Running%20locally.png)
 
@@ -318,6 +340,86 @@ POST /api/smart-route
 }
 ```
 
+### 4. 🤖 Agribricks AI Assistant
+```bash
+POST /api/agribricks-ai
+```
+
+**Request:**
+```json
+{
+  "question": "How do I control aphids on my tomato plants naturally?",
+  "location": "Central Kenya",
+  "crop_type": "tomatoes",
+  "language": "en"
+}
+```
+
+**Response:**
+```json
+{
+  "question": "How do I control aphids on my tomato plants naturally?",
+  "answer": "🎯 **Direct Answer**\nAphids on tomatoes can be effectively controlled using several natural methods...\n\n📋 **Action Steps**\n1. Spray plants with neem oil solution (2-3ml per liter of water)\n2. Introduce beneficial insects like ladybugs and lacewings\n3. Use companion planting with marigolds and basil...",
+  "confidence_score": 0.92,
+  "sources": [
+    "Agricultural best practices database",
+    "Integrated pest management protocols"
+  ],
+  "recommendations": [
+    "Apply neem oil spray early morning or evening",
+    "Monitor plants weekly for early detection",
+    "Maintain proper plant spacing for air circulation"
+  ],
+  "location_context": "Central Kenya",
+  "crop_context": "tomatoes"
+}
+```
+
+### 5. 🔬 Crop Disease Detection (NEW!)
+```bash
+POST /api/crop-disease-detection
+```
+
+**Request (Multipart Form):**
+```bash
+curl -X POST "http://localhost:8000/api/crop-disease-detection" \
+  -F "image=@plant_photo.jpg" \
+  -F "crop_type=tomato" \
+  -F "location=Central Kenya" \
+  -F "additional_symptoms=Brown spots, yellowing leaves"
+```
+
+**Response:**
+```json
+{
+  "diagnosis": "Early Blight (Alternaria solani) - Fungal infection commonly affecting tomatoes",
+  "confidence": "High",
+  "severity": "Moderate",
+  "treatment_recommendations": [
+    "Apply copper-based fungicide spray every 7-10 days",
+    "Remove and destroy affected leaves immediately",
+    "Improve air circulation around plants",
+    "Apply neem oil as organic alternative"
+  ],
+  "management_strategy": [
+    "Implement crop rotation with non-solanaceous crops",
+    "Mulch around plants to prevent soil splash",
+    "Water at soil level to avoid wetting leaves",
+    "Plant resistant tomato varieties next season"
+  ],
+  "crop_type": "tomato",
+  "location": "Central Kenya",
+  "model_used": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "full_analysis": "Detailed pathological analysis..."
+}
+```
+
+**Health Checks:**
+```bash
+GET /api/agribricks-ai/health
+GET /api/examples  # Get example questions and usage tips
+```
+
 ## ML Models
 
 ### Rainfall Prediction
@@ -370,6 +472,7 @@ Key settings in `.env`:
 # API Keys
 ORS_API_KEY=your_key_here
 OPENROUTER_API_KEY=your_key_here
+GROQ_API_KEY=your_groq_key_here
 
 # Database
 DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
