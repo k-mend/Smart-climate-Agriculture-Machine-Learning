@@ -204,7 +204,8 @@ if virtual environment is not activated activate with
 source venv/bin/activate
 uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 ```
-![Running Locally](Screenshots/Api%20running.png)
+![Running Locally](Screenshots/Running%20locally.png)
+
 
 The API will be available at:
 - API: http://localhost:8000
@@ -414,16 +415,22 @@ Create a new webservice and configure the following:
 
 - Branch: main (or whatever branch your code is on).
 
-Configure the following envirinment variables:
-ORS_API_KEY -> From OpenRouteService
-OPENROUTER_API_KEY -> From OpenRouter
-RAINFALL_THRESHOLD -> 20.0
-ORS_BASE_URL -> https://api.openrouteservice.org,
-OPENROUTER_MODEL -> anthropic/claude-3-haiku,
-DATA_DIR -> ./data
-MODELS_DIR -> ./models
+- Configure the following envirinment variables:
+
+- ORS_API_KEY -> From OpenRouteService
+- OPENROUTER_API_KEY -> From OpenRouter
+- RAINFALL_THRESHOLD -> 20.0
+- ORS_BASE_URL -> https://api.openrouteservice.org,
+- OPENROUTER_MODEL -> anthropic/claude-3-haiku,
+- DATA_DIR -> ./data
+- MODELS_DIR -> ./models
+
+- After successful configuration render logs should display the following:
+![render logs](Screenshots/render%20logs.png)
 
 #### Live url found at: "https://smart-climate-agriculture-machine.onrender.com" to test the apis add  "/docs" to the url
+![Live on Render](Screenshots/live%20api.png)
+
 ## Troubleshooting
 
 ### Models not loading
