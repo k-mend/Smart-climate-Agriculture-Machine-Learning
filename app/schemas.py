@@ -144,6 +144,47 @@ class SmartRouteResponse(BaseModel):
 
 
 # =============================================================================
+# AGRIBRICKS AI ASSISTANT
+# =============================================================================
+
+class AgribricksAIRequest(BaseModel):
+    question: str = Field(..., description="Farmer's question about agriculture")
+    location: Optional[str] = Field(None, description="Optional location context")
+    crop_type: Optional[str] = Field(None, description="Optional crop type context")
+    language: Optional[str] = Field("en", description="Response language (en, sw, etc.)")
+
+
+class AgribricksAIResponse(BaseModel):
+    question: str
+    answer: str
+    confidence_score: float = Field(..., ge=0.0, le=1.0)
+    sources: List[str] = Field(default_factory=list)
+    recommendations: List[str] = Field(default_factory=list)
+    location_context: Optional[str] = None
+    crop_context: Optional[str] = None
+
+
+class CropDiseaseDetectionRequest(BaseModel):
+    crop_type: Optional[str] = Field(None, description="Type of crop in the image")
+    location: Optional[str] = Field(None, description="Location for regional disease context")
+    additional_symptoms: Optional[str] = Field(None, description="Additional symptoms observed by farmer")
+    # Note: image will be uploaded as multipart/form-data
+
+
+class CropDiseaseDetectionResponse(BaseModel):
+    diagnosis: str = Field(..., description="Primary disease diagnosis")
+    confidence: str = Field(..., description="Confidence level: High, Medium, or Low")
+    severity: str = Field(..., description="Disease severity: Mild, Moderate, or Severe")
+    treatment_recommendations: List[str] = Field(default_factory=list, description="Immediate treatment steps")
+    management_strategy: List[str] = Field(default_factory=list, description="Long-term management approach")
+    crop_type: Optional[str] = None
+    location: Optional[str] = None
+    additional_symptoms: Optional[str] = None
+    full_analysis: Optional[str] = Field(None, description="Complete diagnostic analysis")
+    model_used: Optional[str] = Field(None, description="AI model used for analysis")
+
+
+# =============================================================================
 # DATABASE MODELS (for API responses)
 # =============================================================================
 

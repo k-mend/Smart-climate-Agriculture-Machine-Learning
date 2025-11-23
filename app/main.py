@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -13,12 +13,15 @@ from .schemas import (
     SmartRouteRequest, SmartRouteResponse,
     HealthResponse, Coordinates, CropRecommendation,
     TemperatureRange, RainfallRange, MonthlyRainfallForecast,
-    OptimalConditions, SuitabilityFactors
+    OptimalConditions, SuitabilityFactors,
+    AgribricksAIRequest, AgribricksAIResponse,
+    CropDiseaseDetectionRequest, CropDiseaseDetectionResponse
 )
 from .ml_models import MLModels
 from .routing import RoutingService
 from .geocoding import GeocodingService
 from .ai_humanizer import AIHumanizer
+from .agribricks_ai import AgribricksAI
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
@@ -50,6 +53,7 @@ ml_models = MLModels()
 routing_service = RoutingService()
 geocoding_service = GeocodingService()
 ai_humanizer = AIHumanizer()
+agribricks_ai = AgribricksAI()
 
 @app.on_event("startup")
 async def startup_event():
@@ -356,6 +360,223 @@ async def smart_route(
         import traceback
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/agribricks-ai", response_model=AgribricksAIResponse)
+async def agribricks_ai_assistant(request: AgribricksAIRequest):
+    """
+    Agribricks AI Assistant - Get expert agricultural advice
+    
+    This endpoint provides intelligent, context-aware agricultural advice using
+    advanced AI models. Perfect for farmers seeking guidance on:
+    - Crop selection and management
+    - Pest and disease control
+    - Soil health and fertilization
+    - Weather-based farming decisions
+    - Sustainable farming practices
+    - Market timing and economics
+    
+    Returns:
+    - Expert agricultural advice
+    - Actionable recommendations
+    - Confidence score
+    - Relevant sources and tips
+    """
+    try:
+        logger.info(f"Agribricks AI request: {request.question[:100]}...")
+        
+        # Get AI response
+        ai_response = await agribricks_ai.get_agricultural_advice(
+            question=request.question,
+            location=request.location,
+            crop_type=request.crop_type,
+            language=request.language
+        )
+        
+        # Check for errors in AI response
+        if "error" in ai_response:
+            logger.warning(f"AI service error: {ai_response['error']}")
+        
+        # Prepare response
+        response_data = AgribricksAIResponse(
+            question=request.question,
+            answer=ai_response["answer"],
+            confidence_score=ai_response["confidence_score"],
+            sources=ai_response["sources"],
+            recommendations=ai_response["recommendations"],
+            location_context=request.location,
+            crop_context=request.crop_type
+        )
+        
+        return response_data
+        
+    except Exception as e:
+        logger.error(f"Error in Agribricks AI assistant: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        
+        # Return a helpful error response instead of raising HTTP exception
+        return AgribricksAIResponse(
+            question=request.question,
+            answer=f"I apologize, but I'm currently experiencing technical difficulties. "
+                   f"For immediate assistance, please contact your local agricultural extension office. "
+                   f"Error details: {str(e)}",
+            confidence_score=0.0,
+            sources=["Local agricultural extension services", "Agricultural research institutions"],
+            recommendations=[
+                "Contact your local agricultural extension office",
+                "Consult with experienced farmers in your area",
+                "Check government agricultural websites for your region"
+            ],
+            location_context=request.location,
+            crop_context=request.crop_type
+        )
+
+@app.get("/api/agribricks-ai/health")
+async def agribricks_ai_health():
+    """Check Agribricks AI service health"""
+    try:
+        # Test if the AI service is working
+        test_response = await agribricks_ai.get_agricultural_advice(
+            question="What is sustainable agriculture?",
+            location="Test",
+            crop_type="General"
+        )
+        
+        is_healthy = "error" not in test_response and len(test_response["answer"]) > 50
+        
+        return {
+            "status": "healthy" if is_healthy else "degraded",
+            "message": "Agribricks AI is operational" if is_healthy else "AI service experiencing issues",
+            "service": "Agribricks AI Assistant",
+            "model": "Groq Llama3-70B",
+            "capabilities": [
+                "Crop management advice",
+                "Pest and disease control",
+                "Soil health guidance",
+                "Weather-based decisions",
+                "Sustainable farming practices",
+                "Market timing advice"
+            ]
+        }
+        
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "message": f"AI service error: {str(e)}",
+            "service": "Agribricks AI Assistant",
+            "error": str(e)
+        }
+
+@app.post("/api/crop-disease-detection", response_model=CropDiseaseDetectionResponse)
+async def crop_disease_detection(
+    image: UploadFile = File(..., description="Plant image for disease analysis"),
+    crop_type: Optional[str] = Form(None, description="Type of crop in the image"),
+    location: Optional[str] = Form(None, description="Location for regional disease context"),
+    additional_symptoms: Optional[str] = Form(None, description="Additional symptoms observed")
+):
+    """
+    🔬 Crop Disease Detection - AI-powered plant disease diagnosis from images
+    
+    Upload an image of your crop to get:
+    - Disease identification and diagnosis
+    - Confidence level and severity assessment
+    - Treatment recommendations (organic & chemical)
+    - Management strategies and prevention tips
+    - Regional disease context
+    
+    Supported image formats: JPEG, PNG, GIF, WebP
+    Recommended: Clear, well-lit photos of affected plant parts
+    
+    Returns:
+    - Primary diagnosis with confidence level
+    - Treatment and management recommendations
+    - Severity assessment and urgency indicators
+    """
+    try:
+        logger.info(f"🔬 Disease detection request for {crop_type or 'unknown crop'}")
+        
+        # Validate file type
+        if not image.content_type or not image.content_type.startswith('image/'):
+            raise HTTPException(
+                status_code=400, 
+                detail="Invalid file type. Please upload an image file (JPEG, PNG, GIF, WebP)."
+            )
+        
+        # Check file size (limit to 10MB)
+        max_size = 10 * 1024 * 1024  # 10MB
+        image_data = await image.read()
+        
+        if len(image_data) > max_size:
+            raise HTTPException(
+                status_code=400,
+                detail="Image file too large. Please upload an image smaller than 10MB."
+            )
+        
+        if len(image_data) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Empty image file. Please upload a valid image."
+            )
+        
+        # Get disease diagnosis from AI
+        diagnosis_result = await agribricks_ai.detect_crop_disease(
+            image_data=image_data,
+            crop_type=crop_type,
+            location=location,
+            additional_symptoms=additional_symptoms
+        )
+        
+        # Check for errors in diagnosis
+        if "error" in diagnosis_result:
+            logger.warning(f"Disease detection error: {diagnosis_result['error']}")
+        
+        # Prepare response
+        response_data = CropDiseaseDetectionResponse(
+            diagnosis=diagnosis_result["diagnosis"],
+            confidence=diagnosis_result["confidence"],
+            severity=diagnosis_result["severity"],
+            treatment_recommendations=diagnosis_result["treatment_recommendations"],
+            management_strategy=diagnosis_result["management_strategy"],
+            crop_type=crop_type,
+            location=location,
+            additional_symptoms=additional_symptoms,
+            full_analysis=diagnosis_result.get("full_analysis"),
+            model_used=diagnosis_result.get("model_used")
+        )
+        
+        logger.info(f"✅ Disease diagnosis completed: {diagnosis_result['diagnosis'][:50]}...")
+        return response_data
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in crop disease detection: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        
+        # Return helpful error response
+        return CropDiseaseDetectionResponse(
+            diagnosis=f"I encountered an error while analyzing your image: {str(e)}. Please try again with a clear, well-lit image of the affected plant.",
+            confidence="Low",
+            severity="Unknown",
+            treatment_recommendations=[
+                "Try uploading the image again",
+                "Ensure the image is clear and well-lit",
+                "Take photos of affected leaves, stems, or fruits",
+                "Contact your local agricultural extension office"
+            ],
+            management_strategy=[
+                "Monitor plants closely for symptom changes",
+                "Isolate affected plants if possible",
+                "Document symptoms with multiple photos",
+                "Consult with experienced farmers in your area"
+            ],
+            crop_type=crop_type,
+            location=location,
+            additional_symptoms=additional_symptoms,
+            full_analysis=f"Error occurred during analysis: {str(e)}",
+            model_used="llama-3.2-90b-vision-preview"
+        )
 
 if __name__ == "__main__":
     import uvicorn
