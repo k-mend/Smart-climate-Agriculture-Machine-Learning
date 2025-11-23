@@ -33,7 +33,7 @@ class AgribricksAI:
                 # Using Llama 3.3 70B (Versatile and high quality)
                 self.llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="llama-3.3-70b-versatile", 
+                    model_name="meta-llama/llama-4-scout-17b-16e-instruct", 
                     temperature=0.3,
                     max_tokens=1024
                 )
@@ -42,7 +42,7 @@ class AgribricksAI:
                 # Using Llama 3.2 90B Vision
                 self.vision_llm = ChatGroq(
                     groq_api_key=self.groq_api_key,
-                    model_name="llama-3.2-90b-vision-preview", 
+                    model_name="meta-llama/llama-4-scout-17b-16e-instruct", 
                     temperature=0.2,
                     max_tokens=1024
                 )
