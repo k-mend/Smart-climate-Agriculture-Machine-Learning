@@ -579,3 +579,76 @@ For issues and questions:
 - NASA POWER for weather data
 - OpenRouteService for routing
 - OpenStreetMap for road data
+
+---
+
+## Frontend Application
+
+A clean, user-friendly web interface for the Smart Climate Agriculture API.
+
+### Features
+- Location Analysis with crop recommendations
+- Crop-specific suitability analysis
+- Smart weather-aware routing
+- AI-powered agricultural assistant
+- Disease detection from plant images
+
+### Tech Stack
+- React 18 + TypeScript
+- Vite (fast build tool)
+- Axios for API calls
+- Lucide React icons
+- Clean agricultural theme (earth tones)
+
+### Quick Deploy to Vercel
+
+1. Navigate to frontend directory:
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Test locally:
+```bash
+npm run dev
+```
+
+4. Deploy to Vercel:
+   - Push to GitHub
+   - Go to [vercel.com](https://vercel.com)
+   - Import your repository
+   - Set root directory to `frontend`
+   - Add environment variable: `VITE_API_URL` = `https://smart-climate-agriculture-machine.onrender.com`
+   - Deploy
+
+See `frontend/QUICK_START.md` for detailed deployment instructions.
+
+### Frontend Structure
+```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── LocationAnalysis.tsx
+│   │   ├── CropAnalysis.tsx
+│   │   ├── SmartRoute.tsx
+│   │   ├── AIAssistant.tsx
+│   │   └── DiseaseDetection.tsx
+│   ├── App.tsx
+│   ├── App.css
+│   └── config.ts
+├── index.html
+├── vercel.json
+└── package.json
+```
+
+### Design Philosophy
+- Earth tones matching agricultural theme
+- Clean, accessible interface
+- Mobile-responsive design
+- Clear visual hierarchy
+- Minimal color palette to avoid eye strain
+
